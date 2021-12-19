@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:replace="Fragment::page_heading('Your Account Details' ,'none')"></header>
+<body>
+
+<div class="container-fluid">
+
+<div th:replace = "navigation::navigate">
+	
+</div> 
+
+	
+
+
+<form th:action="@{/account/update}" method="post" style="max-width: 700px; margin: 0 auto" th:object="${user}" 
+enctype = "multipart/form-data"
+>
+
+	<div th:if="${message != null}" class="text-center alert alert-success mt-3">
+	
+	[[${message}]]
+	</div>	
+	<div class="text-center">
+	<h1>Your Account Details</h1>
+	
+	</div>
+	<div class="border border-secondary rounded p-3">
+		
+		<input type = "hidden" th:field = "*{id}"/>
+		<div class="form-group row">
+			<label class="col-sm-4 col-form-label">E-mail</label>
+			<div class="col-sm-8">
+				<input type="email" class="form-control" th:field="*{email}"/>
+			</div>
+		</div>
+		
+		<div class="form-group row">
+			<label class="col-sm-4 col-form-label">First Name</label>
+			<div class="col-sm-8">
+				<input type="text" class="form-control" th:field="*{firstName}" required minlength="2" maxlength="45"/>
+			</div>
+		</div>
+		
+		<div class="form-group row">
+			<label class="col-sm-4 col-form-label">Last Name</label>
+			<div class="col-sm-8">
+				<input type="text" class="form-control" th:field="*{lastName}" required minlength="2" maxlength="45"/>
+			</div>
+		</div>
+		
+		
+		<div class="form-group row">
+			<label class="col-sm-4 col-form-label">Password</label>
+			<div class="col-sm-8">
+				<input type = "password"  th:field = "*{password}" class = "form-control"
+				placeholder="leave blank if you dont want to change password"	minlength="8" maxlength="20"
+				oninput="checkPasswordMatch(document.getElementById('confirmpass'))"
+				
+				/>
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-sm-4 col-form-label">confirm Password</label>
+			<div class="col-sm-8">
+				<input type = "password"  id=  "confirmpass" class = "form-control" minlength="8" maxlength="20"
+				oninput="checkPasswordMatch(this)" />
+			</div>
+		</div>
+		
+		<div class="form-group row">
+			<label class="col-sm-4 col-form-label"> Assign Roles</label>
+			<div class="col-sm-8">
+				<span><b>[[${user.roles}]]</b></span>
+			</div>
+		</div>
+		
+		
+			
+		<div class="form-group row">
+			<label class="col-sm-4 col-form-label">Photos </label>
+			<div class="col-sm-8">
+				<input type = "file" class="mb-2" name = "image" id = "fileimage" accept = "image/png , image/jpeg"/>
+				<img id = "thumbnail" class="img-fluid" alt = "photos review" th:src = "@{${user.PhotosImagePath}}" style="height:100px;min-width:100px;max-width:400px;width:auto;" /> 
+			</div>
+		</div>
+	
+	
+		<div class="text-center">
+			<input type = "submit" value = "save" class = "btn btn-primary m-3" />
+			<input type = "button" value = "cancel" class = "btn btn-secondary" id="buttonCancle"/>
+		</div>
+	</div>
+</form> 
+
+
+
+<div class="modal fade text-center" id = "modalDialog">
+	<div class="modal-dialog">
+		<div class="modal-content">i
+			<div class="modal-header">
+					<h4 class="modal-title" id="modalTitle">Warning</h4>
+					<button type="button"  class="close" data-dismiss="modal">&times;</button> 
+			</div>
+			
+			<div class="modal-body">
+				<span id = "modalBody"></span>
+			</div>
+			
+			<div class = "modal-footer">
+				<button type= "button"  class="btn btn-danger" data-dismiss= "modal">close</button>
+			</div>
+			
+		</div>
+	</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div th:replace="footer::foot"></div>
+</div>
+		
+<script type="text/javascript">
+
+mouleURL = "[[@{/users}]]";
+
+
+function checkPasswordMatch(confirmpass){
+
+	if(confirmpass.value != $("#password").val()){
+
+		confirmpass.setCustomValidity("password do not match!");
+	}
+	else{
+		confirmpass.setCustomValidity("");
+	}
+}
+
+
+
+</script>
+<script th:src = "@{/js/common_form.js}"></script>		
+
+
+</body>
+</html>

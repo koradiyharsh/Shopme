@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="Fragment::page_heading('Brands - Shopme Admin' , 'none')"/>
+<body>
+<div class="container-fluid">
+	
+	<div th:replace="navigation :: navigate">
+		
+	</div>
+
+
+<div>
+	<div th:if="${message != null}" class="text-center alert alert-success mt-2">
+			[[${message}]]
+	</div>	
+
+	<h1>Manage Brands</h1>
+	<a  th:href="@{/brands/new}"  class="fas fa-user-plus fa-2x icon-silver mr-2"></a>
+
+	<a  th:href="@{/brands/export/csv}"  class="fas fa-file-csv fa-2x icon-silver mr-2"></a>
+
+	<a  th:href="@{/brands/export/pdf}"  class="fas fa-file-pdf fa-2x icon-silver"></a>
+
+	<a  th:href="@{/brands/export/excel}"  class="fas fa-file-excel fa-2x icon-silver mr-2"></a>
+	
+	
+</div>
+
+
+<div>
+		<form th:action = "@{/brands/page/1}" class = "form-inline m-3">
+			<input type = "hidden" name ="sortField" th:value ="${sortField}" />
+			<input type = "hidden" name ="sortDir" th:value ="${sortDir}" /> 
+			Filter : &nbsp;
+			<input type = "search" name = "keyword" th:value="${keyword}" class = "form-control" required />
+			&nbsp;&nbsp;
+			<button type="submit" class="btn btn-primary">
+				<i class="fas fa-search"></i>
+			</button>
+			&nbsp;&nbsp;
+			<button type = "reset" class = "btn btn-secondary" onclick="clearfunction()">
+				<i class="fas fa-eraser"></i>
+			</button>
+		</form>
+</div>
+
+
+<div class="full-detail">
+
+	<table class="table table-bordered table-hover table-striped table-responsive-xl mt-2">
+		<thead class="thead-dark">
+			<tr>
+				<th class="hidable_column"> Brand ID</th>
+				<th>Brand Logo</th>
+
+				
+				<th>
+				<a  th:if="${sortField!='name'}" class="text-white" th:href="@{'/brands/page/'+${currentpage}+'?sortField=name&sortDir=' + ${sortDir} + ${keyword!=null ? '&keyword='+keyword : ''}   }">
+					Brand Name</a>	
+			
+				<a  th:if="${sortField=='name'}" class="text-white" th:href="@{'/brands/page/'+${currentpage}+'?sortField=name&sortDir=' + ${reverseSortDir} + ${keyword!=null ? '&keyword='+keyword : ''}   }">
+					Brand Name</a>
+					
+				<span th:if="${sortField=='name'}" 
+						th:class="${sortDir=='asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}">
+				</span>
+				</th>
+				<th>
+					Categories
+				</th>
+				
+				<th>
+					Actions
+				</th>
+			</tr>
+		</thead>
+		
+		<tbody>
+			<tr th:each="brand : ${brands}">
+				<td class="hidable_column"> [[${brand.id}]] </td>
+				<td> 
+					<img th:src="@{${brand.imagepath}}" style="width:100px;height:100px" class="img-fluid"/>
+				</td>
+				<td> [[${brand.name}]] </td>
+				<td>   
+				 <th:block th:each = "dummy: ${brand.categories}">
+						<span class= "badge badge-secondary" th:text="${dummy.name}"></span>
+				 </th:block>
+					
+				</td>
+				<td>
+					
+					<a class="fas fa-user-edit fa-3x icon-green" th:href="@{'/brands/update/'+${brand.id}}" title="Edit the User"></a> &nbsp;
+					<a class="fas fa-trash-alt fa-3x icon-red" 
+					th:href = "@{'/brands/delete/'+ ${brand.id}}"
+					title = "Delete the User"/>
+				</td>
+			
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+
+
+
+<!-- small section -->
+
+<div class="less_deatil">
+
+		
+	<div  th:each="brand : ${brands}" class = "row">
+
+		<div class="col-6">
+				<span th:if="${brand.logo==null}" class="fas fa-portrait fa-3x icon-blue"> </span>
+				<img th:src="@{${brand.imagepath}}" style="width:100px;height:100px" class="img-fluid"/>
+		</div>
+		<div class="col-6">
+				<div>
+					[[${brand.name}]]
+				</div>
+				<div class="mt-1">
+			
+				<a class="fas fa-user-edit fa-2x icon-green" th:href="@{/brands/update/} + ${brand.id}" title="Edit the User"></a> &nbsp;
+					<a class="fas  fas fa-trash-alt fa-2x icon-red  link-delete" th:href = "@{/brands/delete/} + ${brand.id}" 
+					th:userid = "${brand.id}"
+					title = "Delete the User">
+				</a>
+			</div>
+		</div>
+		
+	</div>
+</div>
+<div th:replace="modal_fragment::confirm_modal"></div>
+
+
+</div>
+
+
+<div>
+	<nav>
+  		<ul class="pagination justify-content-center flex-wrap">
+  			<li th:class="${currentpage > 1} ? 'page-item':'page-item disabled'">
+  				<a class="page-link" th:href="@{'/brands/page/1?sortField='+${sortField}+'&sortDir='+${sortDir} + ${keyword!=null ? '&keyword='+keyword : ''}}">First</a>
+  			</li>
+  			<li th:class="${currentpage > 1} ? 'page-item':'page-item disabled'">
+  				<a class="page-link" th:href="@{'/brands/page/'+ ${currentpage - 1}+'?sortField='+${sortField}+'&sortDir='+${sortDir} + ${keyword!=null ? '&keyword='+keyword : ''}}">Previous</a>
+  			</li>
+		   
+		    <li th:class="${currentpage != i ? 'page-item':'page-item active'}"  th:each = "i : ${#numbers.sequence(1 , totalpage)}">
+		    	<a class="page-link" th:href="@{'/brands/page/'+${i}+ '?sortField='+${sortField}+'&sortDir='+${sortDir} + ${keyword!=null ? '&keyword='+keyword : ''}}">[[${i}]]</a>
+		    </li>
+		   
+		    
+		    
+		    <li th:class="${currentpage < totalpage ? 'page-item' : 'page-item disabled'}">
+		    	<a class="page-link" th:href="@{'/brands/page/'+ ${currentpage+1}}+'?sortField='+${sortField}+'&sortDir='+${sortDir} + ${keyword!=null ? '&keyword='+keyword : ''}">Next</a>
+		    </li>
+		     <li th:class="${currentpage < totalpage ? 'page-item' : 'page-item disabled'}">
+		     	<a class="page-link" th:href="@{'/brands/page/'+${totalpage}+'?sortField='+${sortField}+'&sortDir='+${sortDir} + ${keyword!=null ? '&keyword='+keyword : ''}}">Last</a>
+		     </li>
+  		</ul>
+	</nav>
+</div>
+
+<div th:replace="footer::foot"></div>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+	mouleURL = "[[@{/brands}]]";
+
+	$(document).ready(function(){
+
+		$(".link_delete").on("click" , function(e){
+				e.preventDefault();
+				showDeleteConfirmDialog($(this) ,  'Brand');
+		});
+		
+	});
+
+function  clearfunction()
+{
+	window.location = "[[@{'/brands'}]]";
+
+}
+</script>
+<script th:src = "@{/js/common_form.js}"></script>
+<script th:src = "@{/js/common_list.js}"></script>	
+</body>
+
+</html>

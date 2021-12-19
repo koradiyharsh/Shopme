@@ -1,0 +1,159 @@
+ <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+  <head th:replace="Fragment::page_heading(${pageTitle}  , 'tag')" />
+  <link rel="stylesheet" th:href = "@{/richText/richtext.min.css}"/>
+  <script th:src = "@{/richText/jquery.richtext.min.js}"></script>
+</head>
+<body>
+
+<div class="container-fluid">
+
+<div th:replace = "navigation::navigate">
+	
+</div> 
+<div>
+	<h1>Manage Products | [[${pageTitle}]]</h1>
+	
+</div>
+	
+
+
+<form th:action="@{/products/save}" method="post"  
+onsubmit="return checkUnique(this)" th:object="${product}">
+
+<input type="hidden" th:field="*{id}"/>
+<div>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+	  <a class="nav-link"  data-toggle="tab" href="#overview" role="tab"  >Overview</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link"  data-toggle="tab" href="#description" role="tab"  >Description</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link"  data-toggle="tab" href="#images" role="tab" >Images</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link"  data-toggle="tab" href="#details" role="tab">Details</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link"  data-toggle="tab" href="#shipping" role="tab">Shipping</a>
+  </li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+  <div class="tab-pane active p-3" id="overview" role="tabpanel">
+	  <div th:replace = "product/Overview_fragment :: content"></div>
+  </div>
+  <div class="tab-pane" id="description" role="tabpanel" >
+    <div th:replace = "product/description_fragment :: content"></div>
+  </div>
+  <div class="tab-pane" id="images" role="tabpanel" >Images</div>
+  <div class="tab-pane" id="details" role="tabpanel" >Details</div>
+  <div class="tab-pane" id="shipping" role="tabpanel" >
+      <div th:replace = "product/shipping_fragment :: content"></div>
+  </div>
+</div>
+
+<div class="text-center">
+			<input type = "submit" value = "save" class = "btn btn-primary m-3" />
+			<input type = "button" value = "cancel" class = "btn btn-secondary"/>
+</div>
+
+
+</div>
+</form>
+
+<div th:replace="footer::foot"></div>
+
+<div th:replace="modal_fragment::modal_dialog"></div>
+
+
+<script type="text/javascript">
+
+mouleURL = "[[@{/products}]]";
+brandURL = "[[@{/brands}]]";
+
+dropdownBrand  = $("#brand");
+dropdownCategory  = $("#category");
+
+
+$(document).ready(function(){
+
+    $("#shortDescription").richText();
+    $("#FullDescription").richText();
+    dropdownBrand.change(function(){
+      
+
+    dropdownCategory.empty();
+    getCategories();
+
+  });
+  getCategories();
+  
+
+});
+
+function getCategories(){
+
+  brandID  =  dropdownBrand.val();
+
+  url = brandURL + '/' + brandID + '/categories';
+  
+  $.get(url , function(response){
+
+    $.each(response , function(index , category){
+
+        $("<option>").val(category.id).text(category.name).appendTo(dropdownCategory);
+
+    });
+
+  });
+
+}
+
+function checkUnique(form)
+{
+
+  productID  =  $("#id").val();
+  ProductName  = $("#name").val();
+  csrfValue  = $("input[name='_csrf']").val();
+  
+  url = "[[@{/products/check_unique}]]";
+
+
+  params  = {id: productID , name: ProductName , _csrf: csrfValue};
+
+  $.post(url , params , function(response){
+
+      if(response=="OK"){
+        form.submit();
+      }
+      else if(response == "Duplicate"){
+        showWarningModal("There is another Product having same name "+ProductName);
+      }
+      else{
+        showErrorModal("Unknow person from server")
+      }
+
+  }).fail(function(){
+    showErrorModal("could not connect to the server")    
+  });
+
+  return false;
+
+
+}
+
+
+
+</script>
+<script th:src = "@{/js/common_form.js}"></script>
+
+</div>
+</body>
+</html>
