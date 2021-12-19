@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="Fragment::page_heading('Brands - Shopme Admin' , 'none')"/>
+<head th:replace="Fragment::page_heading('Brands - Shopme Admin')"/>
 <body>
 <div class="container-fluid">
 	
@@ -123,7 +123,7 @@
 				<div class="mt-1">
 			
 				<a class="fas fa-user-edit fa-2x icon-green" th:href="@{/brands/update/} + ${brand.id}" title="Edit the User"></a> &nbsp;
-					<a class="fas  fas fa-trash-alt fa-2x icon-red  link-delete" th:href = "@{/brands/delete/} + ${brand.id}" 
+					<a class="fas fa-trash-alt fa-2x icon-red link_delete" th:href = "@{/brands/delete/} + ${brand.id}" 
 					th:userid = "${brand.id}"
 					title = "Delete the User">
 				</a>

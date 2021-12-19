@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="Fragment::page_heading('Users - Shopme Admin' ,'none')"></head>
+<head th:replace="Fragment::page_heading('Users - Shopme Admin')"></head>
 <body>
 
 <div class="container-fluid">
-	
 	<div th:replace="navigation :: navigate">
-		
-
 	</div>
-
 <div>
 	<h1>Manage Users</h1>
 	<a th:href="@{/users/new}" class="fas fa-user-plus fa-2x icon-silver mr-2"></a>
@@ -160,9 +156,14 @@
 				</td>
 				<td>
 					<a class="fas fa-user-edit fa-3x icon-green" th:href="@{/users/edit/} + ${user.id}" title="Edit the User"></a> &nbsp;
-					<a class="fas fa-trash-alt fa-3x icon-red  link-delete" th:href = "@{'/users/delete/' + ${user.id}}" 
+					
+					
+
+					<a class="fas fa-trash-alt fa-3x delete-link icon-red" th:href = "@{/users/delete/} + ${user.id}"
 					th:userid = "${user.id}"
-					title = "Delete the User"></a>
+					title = "delete the User"></a>
+
+					
 				</td>
 				
 			</tr>
@@ -184,14 +185,17 @@
 				<a th:if="${user.enabled==true}" class = "fas fa-check-circle fa-2x icon-green" 
 					th:href="@{'/users/'+${user.id}+'/enabled/false'}" title = "Disable this user"></a>
 					<a th:if="${user.enabled==false}" class = "fas fa-check-circle fa-2x icon-red" 
-					th:href="@{'/users/'+${user.id}+'/enabled/true'}" title = "Enable this user"></a>
+					th:href="@{'/users/'+${user.id}+'/enabled/true'}" title = "enable this user"></a>
 				&nbsp;
 			
-				<a class="fas fa-user-edit fa-2x icon-green" th:href="@{/users/edit/} + ${user.id}" title="Edit the User"></a> &nbsp;
-					<a class="fas  fas fa-trash-alt fa-2x icon-red  link-delete" th:href = "@{/users/delete/} + ${user.id}" 
+				<a class="fas fa-user-edit fa-2x icon-blue" th:href="@{/users/edit/} + ${user.id}" title="Edit the User"></a> &nbsp;
+
+				<a class="fas fa-trash-alt fa-2x icon-green delete-link" 
+					th:href="@{/users/delete/} + ${user.id}"
 					th:userid = "${user.id}"
-					title = "Delete the User">
+					title = "delete the User">
 				</a>
+				
 			</div>
 		</div>
 		
@@ -234,42 +238,26 @@
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 <div th:replace="modal_fragment::modal_dialog"></div>
-
 <div th:replace="footer::foot"></div>
-		
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
-	$(".link-delete").on("click" , function(e){
+	$(".delete-link").on("click" , function(e){
 		e.preventDefault();
-		//alert($(this).attr("href"));
 		link =  $(this);
 		getID  =  link.attr("userid");
 		$("#yesbutton").attr("href"  , link.attr("href"));
 		$("#confirmText").text("Are you sure want to delete this user ID " + getID + " ? ");
 		$("#confirmModal").modal();
 	})	
-})
-
+}) 
 function clearfunction()
 {
 window.location = "[[@{'/users'}]]";
 }
 </script>
-<script th:src = "@{/js/common_form.js}"></script>		
+<script th:src = "@{/js/common_form.js}"></script>
+<script th:src = "@{/js/common_list.js}"></script>		
 </body>
 </html>
